@@ -1,0 +1,54 @@
+function FindProxyForURL(url, host) {
+
+  var wpad = "DIRECT";
+  // Return wpad;  // by-pass when you wish to put Squid Proxy offline without removing proxy.pac
+
+  host = host.toLowerCase();
+
+  var hostIP;
+  var isIpV4Addr = /^(\d+.){3}\d+$/;
+
+  if (isIpV4Addr.test(host))
+    hostIP=host;
+  else
+    hostIP=dnsResolve(host);
+  if (hostIP != 0) {
+    if (isPlainHostName(host) ||
+        shExpMatch(host, ".local") ||
+        shExpMatch(host, ".localdomain.local") ||
+        shExpMatch(host, "*.taius.lan") ||
+        shExpMatch(host, "*.taius.tinc") ||
+        isInNet(dnsResolve(host), "10.0.0.0", "255.0.0.0") ||
+        isInNet(dnsResolve(host), "172.16.0.0", "255.240.0.0") ||
+        isInNet(dnsResolve(host), "192.168.0.0", "255.255.0.0") ||
+        isInNet(dnsResolve(host), "127.0.0.0", "255.255.255.0") ||
+        shExpMatch(host, "fe80::*"))
+    return wpad;
+
+// If the hostname matches, send direct.
+    if (dnsDomainIs(host, "ncc75070-dt.taius.lan") ||
+        dnsDomainIs(host, "CY-SBook.taius.lan") ||
+        dnsDomainIs(host, "CY-SBook-LAN.taius.lan") ||
+        dnsDomainIs(host, "CY-MBP-13-3.taius.lan") ||
+        dnsDomainIs(host, "CY-iPhone7P.taius.lan") ||
+        dnsDomainIs(host, "CY-iPad-A1823.taius.lan") ||
+        dnsDomainIs(host, "CY-iPhone7.taius.lan") ||
+	dnsDomainIs(host, "CY-XBox1.taius.lan"))
+    return wpad;
+
+// If the protocol or URL matches, send direct.
+// FTP
+    if (url.substring(0,4)=="ftp:") return wpad;
+
+// Main LAN
+    var myIP = myIpAddress();
+    if (shExpMatch(myIP, "169.254.*") ||
+        isInNet(myIP, "192.168.52.0", "255.255.255.0"))
+    wpad = "PROXY 192.168.52.1:3128; DIRECT";
+
+// For additional LAN subnets (example)
+    else if (isInNet(myIP, "192.168.53.0", "255.255.255.0"))
+    wpad = "PROXY 192.168.53.1:3128; DIRECT";
+  }
+  return wpad;
+}
