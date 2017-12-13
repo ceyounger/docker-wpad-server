@@ -1,4 +1,2 @@
 .git/*
-Dockerfile
 .dockerignore
-README.md
