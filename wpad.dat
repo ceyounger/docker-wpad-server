@@ -16,8 +16,7 @@ function FindProxyForURL(url, host) {
     if (isPlainHostName(host) ||
         shExpMatch(host, ".local") ||
         shExpMatch(host, ".localdomain.local") ||
-        shExpMatch(host, "*.taius.lan") ||
-        shExpMatch(host, "*.taius.tinc") ||
+        shExpMatch(host, "*.<YOURDOMAIN>") ||
         isInNet(dnsResolve(host), "10.0.0.0", "255.0.0.0") ||
         isInNet(dnsResolve(host), "172.16.0.0", "255.240.0.0") ||
         isInNet(dnsResolve(host), "192.168.0.0", "255.255.0.0") ||
@@ -26,14 +25,8 @@ function FindProxyForURL(url, host) {
     return wpad;
 
 // If the hostname matches, send direct.
-    if (dnsDomainIs(host, "ncc75070-dt.taius.lan") ||
-        dnsDomainIs(host, "CY-SBook.taius.lan") ||
-        dnsDomainIs(host, "CY-SBook-LAN.taius.lan") ||
-        dnsDomainIs(host, "CY-MBP-13-3.taius.lan") ||
-        dnsDomainIs(host, "CY-iPhone7P.taius.lan") ||
-        dnsDomainIs(host, "CY-iPad-A1823.taius.lan") ||
-        dnsDomainIs(host, "CY-iPhone7.taius.lan") ||
-	dnsDomainIs(host, "CY-XBox1.taius.lan"))
+    if (dnsDomainIs(host, "<HOST1>") ||
+	dnsDomainIs(host, "<HOST2>"))
     return wpad;
 
 // If the protocol or URL matches, send direct.
@@ -43,12 +36,12 @@ function FindProxyForURL(url, host) {
 // Main LAN
     var myIP = myIpAddress();
     if (shExpMatch(myIP, "169.254.*") ||
-        isInNet(myIP, "192.168.52.0", "255.255.255.0"))
-    wpad = "PROXY 192.168.52.1:3128; DIRECT";
+        isInNet(myIP, "<LOCAL_SUBNET>", "<LOCAL_SUBNET_MASK>"))
+    wpad = "PROXY <SQUID_IP>:3128; DIRECT";
 
 // For additional LAN subnets (example)
-    else if (isInNet(myIP, "192.168.53.0", "255.255.255.0"))
-    wpad = "PROXY 192.168.53.1:3128; DIRECT";
+    else if (isInNet(myIP, "<LOCAL2_SUBNET>", "<LOCAL2_SUBNET_MASK>"))
+    wpad = "PROXY <SQUID2_IP>:3128; DIRECT";
   }
   return wpad;
 }
